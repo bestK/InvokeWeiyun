@@ -33,7 +33,7 @@ public class MockWeiyun {
     private static String getSkey(String cookie) {
         List<String> cookies = Arrays.asList(cookie.trim().split(";"));
         for (String v : cookies) {
-            if (v.contains("skey")) {
+            if (v.contains("skey=@")) {
                 return v.replace("skey=", "").trim();
             }
         }
@@ -108,13 +108,11 @@ public class MockWeiyun {
         String torrentHex = beforeResult.getString("torrent_hex");
         JSONArray fileArray = beforeResult.getJSONArray("file_list");
         String dirName = beforeResult.getString("dir_name");
-        String payload = "{\"req_header\":\"{\\\"seq\\\":15266130626605832,\\\"type\\\":1,\\\"cmd\\\":28210,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\""+skey+"\\\"}},\\\".weiyun.OdAddBtTaskMsgReq_body\\\":{\\\"torrent_hex\\\":\\\""+torrentHex+"\\\",\\\"is_default_dir\\\":true,\\\"dir_name\\\":\\\""+dirName+"\\\",\\\"pdir_key\\\":\\\"\\\",\\\"ppdir_key\\\":\\\"\\\",\\\"file_list\\\":abcde}}}\"}";
-        payload = StringEscapeUtils.unescapeJson(payload);
-        payload = payload.replace("abcde", JSONObject.toJSONString(fileArray,SerializerFeature.WRITE_MAP_NULL_FEATURES));
-        //payload = StringEscapeUtils.escapeJson(payload).trim();
+        String payload = "{\"req_header\":\"{\\\"seq\\\":15266255876846218,\\\"type\\\":1,\\\"cmd\\\":28210,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.OdAddBtTaskMsgReq_body\\\":{\\\"torrent_hex\\\":\\\"" + torrentHex + "\\\",\\\"is_default_dir\\\":true,\\\"dir_name\\\":\\\"" + dirName + "\\\",\\\"ppdir_key\\\":\\\"\\\",\\\"pdir_key\\\":\\\"\\\",\\\"file_list\\\":myFileList}}}\"}";
+        String movieList = StringEscapeUtils.escapeJson(fileArray.toString());
+        payload = payload.replace("myFileList", movieList);
         System.out.println("popopopo" + payload);
         delimiter();
-
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_SAVE, payload, cookie, null);
     }
 
