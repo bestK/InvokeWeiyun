@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by KAI on 2018/5/14.
@@ -26,9 +27,11 @@ public class MockWeiyun {
         MockWeiyun.cookie = cookie;
     }
 
-    private static String cookie = "pgv_pvid=9686645906; web_wx_rc=JJJLTKTBFV; uin=o3338614228; skey=@0SXLIrAau; pt2gguin=o3338614228; p_uin=o3338614228; pt4_token=tjE6YjXBjKpGbbah7g57NLRXQHz6QIN9ngCGGgZTgxc_; p_skey=NNmRuUzVm1bhlZ*TLn*qd76Ddqt8CpLZnin*GZQc4-8_";
+    private static String cookie = "pt2gguin=o2554497177; web_wx_rc=TSIHJV; uin=o2554497177; skey=@dQjxzvoSe; p_uin=o2554497177; pt4_token=NBLBn7mF7ySz6Y5K2t-dBZFlk7nCfq18r5lXi5R8aQA_; p_skey=UxQbYCuaugNTa8XwYSFuK448gjKce-jDEZ5zAZ65sIU_";
     private static String skey = getValue("skey=");
     private static String uid = getValue("uin=0");
+    private static String movieName;
+    private static String movieUrl;
 
 
     /**
@@ -42,32 +45,33 @@ public class MockWeiyun {
         return WeiyunHttpRequestUtils.post(WeiyunApi.FILE_LIST, payload, cookie, null);
     }
 
-    public static void main(String[] args) {
-        try {
-            JSONObject jsonObject = JSON.parseObject(getFileList());
-            if (jsonObject.getInteger("ret") != null) {
-                System.out.println(jsonObject.toJSONString());
-                return;
-            }
-            JSONArray fileList = jsonObject.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("FileItem_items");
-            fileList.forEach(file -> {
-                JSONObject fileObject = JSON.parseObject(file.toString());
+
+    /**
+     * 根据电影名字获得下载地址
+     *
+     * @return
+     * @throws IOException
+     */
+    public static String getDownloadUrlByMovieName() throws IOException {
+        JSONObject jsonObject = JSON.parseObject(getFileList());
+        if (jsonObject.getInteger("ret") != null) {
+            return jsonObject.toJSONString();
+        }
+        JSONArray fileList = jsonObject.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("FileItem_items");
+        fileList.forEach(file -> {
+            JSONObject fileObject = JSON.parseObject(file.toString());
+            if (fileObject.getString("filename").contains(movieName)) {
                 String url = "https://www.weiyun.com/video_preview?videoID=" + fileObject.getString("file_id") + "&dirKey=" + fileObject.getString("pdir_key") + "&pdirKey=" + fileObject.getString("ppdir_key");
                 System.out.println("playUrl ：==>" + url);
-                delimiter();
                 try {
-                    weiyunDownloadParse(url);
+                    movieUrl = weiyunDownloadParse(url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });
-            delimiter();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+            }
+        });
+        return movieUrl;
     }
-
 
     /**
      * 提交离线下载
@@ -99,10 +103,10 @@ public class MockWeiyun {
         String torrentHex = beforeResult.getString("torrent_hex");
         JSONArray fileArray = beforeResult.getJSONArray("file_list");
         String dirName = beforeResult.getString("dir_name");
+        movieName = dirName;
         String payload = "{\"req_header\":\"{\\\"seq\\\":15266255876846218,\\\"type\\\":1,\\\"cmd\\\":28210,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.OdAddBtTaskMsgReq_body\\\":{\\\"torrent_hex\\\":\\\"" + torrentHex + "\\\",\\\"is_default_dir\\\":true,\\\"dir_name\\\":\\\"" + dirName + "\\\",\\\"ppdir_key\\\":\\\"\\\",\\\"pdir_key\\\":\\\"\\\",\\\"file_list\\\":myFileList}}}\"}";
         String movieList = StringEscapeUtils.escapeJson(fileArray.toString());
         payload = payload.replace("myFileList", movieList);
-        System.out.println("popopopo" + payload);
         delimiter();
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_SAVE, payload, cookie, null);
     }
@@ -162,13 +166,7 @@ public class MockWeiyun {
 
     @Test
     public void sss() throws IOException {
-        String offlineDownloadBeforeResult = weiyunOdOfflineDownloadClientBefore("magnet:?xt=urn:btih:5e845d1e358000a04fc4257555b8e2a5144ab27b");
-        System.out.println("offline download before result：==>" + offlineDownloadBeforeResult);
-        delimiter();
-        weiyunCompass();
-        String offlineDownloadSaveResult = weiyunOdOfflineDownloadClientSave(offlineDownloadBeforeResult);
-        System.out.println("offline download save result: ==>" + offlineDownloadSaveResult);
-        delimiter();
+        System.out.println(getFileList());
     }
 
 }
