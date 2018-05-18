@@ -29,6 +29,17 @@ public class MockWeiyun {
 
     private static String cookie = "pgv_pvid=9686645906; web_wx_rc=JJJLTKTBFV; uin=o3338614228; skey=@0SXLIrAau; pt2gguin=o3338614228; p_uin=o3338614228; pt4_token=tjE6YjXBjKpGbbah7g57NLRXQHz6QIN9ngCGGgZTgxc_; p_skey=NNmRuUzVm1bhlZ*TLn*qd76Ddqt8CpLZnin*GZQc4-8_";
     private static String skey = getSkey(cookie);
+    private static String uid = getUid(cookie);
+
+    private static String getUid(String cookie) {
+        List<String> cookies = Arrays.asList(cookie.trim().split(";"));
+        for (String v : cookies) {
+            if (v.contains("uin=0")) {
+                return v.replace("uin=o", "").trim();
+            }
+        }
+        return null;
+    }
 
     private static String getSkey(String cookie) {
         List<String> cookies = Arrays.asList(cookie.trim().split(";"));
@@ -91,7 +102,7 @@ public class MockWeiyun {
     }
 
     public static String weiyunCompass() throws IOException {
-        String payload = "{\"uin\":\"1138493417\",\"domain\":\"www.weiyun.com\",\"url\":\"https://www.weiyun.com/disk/folder/e907dc43b950a50858e44864e6174ac2\",\"env\":1,\"proto\":\"weiyunOdOfflineDownloadClient\",\"cmdname\":\"OdAddUrlTask\",\"cmd\":28211,\"code\":0,\"result\":0}";
+        String payload = "{\"uin\":\"" + uid + "\",\"domain\":\"www.weiyun.com\",\"url\":\"https://www.weiyun.com/disk/folder/e907dc43b950a50858e44864e6174ac2\",\"env\":1,\"proto\":\"weiyunOdOfflineDownloadClient\",\"cmdname\":\"OdAddUrlTask\",\"cmd\":28211,\"code\":0,\"result\":0}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_COMPASS, payload, cookie, null);
     }
 
