@@ -3,7 +3,6 @@ package com.ech2o.weiyun.jsoup;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ech2o.weiyun.constant.WeiyunApi;
 import com.ech2o.weiyun.util.WeiyunHttpRequestUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -28,28 +27,9 @@ public class MockWeiyun {
     }
 
     private static String cookie = "pgv_pvid=9686645906; web_wx_rc=JJJLTKTBFV; uin=o3338614228; skey=@0SXLIrAau; pt2gguin=o3338614228; p_uin=o3338614228; pt4_token=tjE6YjXBjKpGbbah7g57NLRXQHz6QIN9ngCGGgZTgxc_; p_skey=NNmRuUzVm1bhlZ*TLn*qd76Ddqt8CpLZnin*GZQc4-8_";
-    private static String skey = getSkey(cookie);
-    private static String uid = getUid(cookie);
+    private static String skey = getValue("skey=");
+    private static String uid = getValue("uin=0");
 
-    private static String getUid(String cookie) {
-        List<String> cookies = Arrays.asList(cookie.trim().split(";"));
-        for (String v : cookies) {
-            if (v.contains("uin=0")) {
-                return v.replace("uin=o", "").trim();
-            }
-        }
-        return null;
-    }
-
-    private static String getSkey(String cookie) {
-        List<String> cookies = Arrays.asList(cookie.trim().split(";"));
-        for (String v : cookies) {
-            if (v.contains("skey=@")) {
-                return v.replace("skey=", "").trim();
-            }
-        }
-        return null;
-    }
 
     /**
      * 获得文件列表
@@ -161,6 +141,23 @@ public class MockWeiyun {
     private static void delimiter() {
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
 
+    }
+
+
+    /**
+     * 获得 cookie 字典
+     *
+     * @param key
+     * @return
+     */
+    private static String getValue(String key) {
+        List<String> cookies = Arrays.asList(cookie.trim().split(";"));
+        for (String v : cookies) {
+            if (v.contains(key)) {
+                return v.replace(key, "").trim();
+            }
+        }
+        return null;
     }
 
     @Test
