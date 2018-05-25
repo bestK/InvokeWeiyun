@@ -28,4 +28,19 @@ public class WeiyunHttpRequestUtils {
     }
 
 
+    /**
+     * 获得 global token
+     *
+     * @param p_skey
+     * @return
+     */
+    public static int getGTK(String p_skey) {
+        int hash = 5381;
+        for (int i = 0; i < p_skey.length(); i++) {
+            hash += (hash << 5) + (int) p_skey.charAt(i);
+        }
+        return hash & 0x7fffffff;
+    }
+
+
 }

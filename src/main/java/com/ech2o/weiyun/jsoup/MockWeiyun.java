@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ech2o.weiyun.constant.WeiyunApi;
 import com.ech2o.weiyun.util.WeiyunHttpRequestUtils;
-import lombok.experimental.var;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,9 +26,10 @@ public class MockWeiyun {
         MockWeiyun.cookie = cookie;
     }
 
-    private static String cookie = "pgv_pvid=9686645906; web_wx_rc=OTWVSHZRNBHGP; uin=o0437104458; skey=@62Rz4Jla1; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=ttnyB1iN0LK2pXIwEbs6W7x1hrVinsmm*sAQXNEgtfk_; p_skey=BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_; pgv_pvid=9686645906; web_wx_rc=OTWVSHZRNBHGP; uin=o0437104458; skey=@62Rz4Jla1; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=ttnyB1iN0LK2pXIwEbs6W7x1hrVinsmm*sAQXNEgtfk_; p_skey=BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_";
+    private static String cookie = "pgv_pvid=9686645906; web_wx_rc=NJOYHWFHDV; uin=o0437104458; skey=@2hn7TMuJW; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=yEReAwwdz*cTCUoxhjP62PvzCHtipK7udRr4rBiSEOw_; p_skey=yBDNfo7TYrBm7W8OT1nj9ew6DR2CeQ6VQfNbINK8LxI_";
     private static String skey = getValue("skey=");
     private static String uid = getValue("uin=0");
+    private static String g_tk = null;
     private static String movieName;
     private static String movieUrl;
 
@@ -40,10 +40,13 @@ public class MockWeiyun {
      * @return
      * @throws IOException
      */
-    public static String getFileList() throws IOException {
-        //String payload = "{\"req_header\":\"{\\\"seq\\\":15272240303038348,\\\"type\\\":1,\\\"cmd\\\":2209,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.DiskDirBatchListMsgReq_body\\\":{\\\"pdir_key\\\":\\\"e907dc43f0a739ae12b58dcd423dce4a\\\",\\\"dir_list\\\":[{\\\"dir_key\\\":\\\"e907dc43b950a50858e44864e6174ac2\\\",\\\"get_type\\\":0,\\\"start\\\":0,\\\"count\\\":100,\\\"sort_field\\\":2,\\\"reverse_order\\\":false,\\\"get_abstract_url\\\":true,\\\"get_dir_detail_info\\\":true}]}}}\"}";
-        String payload = "{\"req_header\":\"{\\\"seq\\\":15272245014516668,\\\"type\\\":1,\\\"cmd\\\":2209,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"@62Rz4Jla1\\\"}},\\\".weiyun.DiskDirBatchListMsgReq_body\\\":{\\\"pdir_key\\\":\\\"4aaf0d1af0a739ae12b58dcd423dce4a\\\",\\\"dir_list\\\":[{\\\"dir_key\\\":\\\"4aaf0d1a06f9a7ee01ee142fc7fc3fd1\\\",\\\"get_type\\\":0,\\\"start\\\":0,\\\"count\\\":100,\\\"sort_field\\\":2,\\\"reverse_order\\\":false,\\\"get_abstract_url\\\":true,\\\"get_dir_detail_info\\\":true}]}}}\"}";
-        return WeiyunHttpRequestUtils.post(WeiyunApi.FILE_LIST, payload, cookie, null);
+    public static String getFileList(String payload) throws IOException {
+        return WeiyunHttpRequestUtils.post(WeiyunApi.FILE_LIST + gtk(), payload, cookie, null);
+    }
+
+    private static String dirPayload(String dirHash) {
+        String atHash = dirHash != null ? dirHash : "4aaf0d1af0a739ae12b58dcd423dce4a";
+        return "{\"req_header\":\"{\\\"seq\\\":15272314269809008,\\\"type\\\":1,\\\"cmd\\\":2209,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.DiskDirBatchListMsgReq_body\\\":{\\\"pdir_key\\\":\\\"4aaf0d1af338fdcb41c5dfa52b9ed888\\\",\\\"dir_list\\\":[{\\\"dir_key\\\":\\\"" + atHash + "\\\",\\\"get_type\\\":0,\\\"start\\\":0,\\\"count\\\":100,\\\"sort_field\\\":2,\\\"reverse_order\\\":false,\\\"get_abstract_url\\\":true,\\\"get_dir_detail_info\\\":true}]}}}\"}";
     }
 
 
@@ -54,22 +57,50 @@ public class MockWeiyun {
      * @throws IOException
      */
     public static String getDownloadUrlByMovieName() throws IOException {
-        JSONObject jsonObject = JSON.parseObject(getFileList());
+        JSONObject jsonObject = JSON.parseObject(getFileList(dirPayload(null)));
         if (jsonObject.getInteger("ret") != null) {
             return jsonObject.toJSONString();
         }
-        JSONArray fileList = jsonObject.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("FileItem_items");
+        JSONArray fileList = JSON.parseObject(jsonObject.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("dir_list").get(0).toString()).getJSONArray("dir_list");
         fileList.forEach(file -> {
             JSONObject fileObject = JSON.parseObject(file.toString());
-            if (fileObject.getString("filename").contains(movieName)) {
-                String url = "https://www.weiyun.com/video_preview?videoID=" + fileObject.getString("file_id") + "&dirKey=" + fileObject.getString("pdir_key") + "&pdirKey=" + fileObject.getString("ppdir_key");
-                System.out.println("playUrl ：==>" + url);
+            if (fileObject.getString("dir_name").equals("离线下载")) {
                 try {
-                    movieUrl = weiyunDownloadParse(url);
+                    JSONObject offlineDir = JSON.parseObject(getFileList(dirPayload(fileObject.getString("dir_key"))));
+
+                    JSONArray offlineDirMovies = JSON.parseObject(offlineDir.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("dir_list").get(0).toString()).getJSONArray("dir_list");
+                    offlineDirMovies.forEach(movie -> {
+                        JSONObject movieObj = JSON.parseObject(movie.toString());
+                        String dirName = movieObj.getString("dir_name");
+                        if (dirName.equals(movieName)) {
+                            try {
+                                String dirkey = movieObj.getString("dir_key");
+                                JSONObject atMovie = JSON.parseObject(getFileList(dirPayload(dirkey)));
+                                JSONObject bese = JSON.parseObject(atMovie.getJSONObject("data").getJSONObject("rsp_body").getJSONObject("RspMsg_body").getJSONArray("dir_list").get(0).toString());
+                                JSONArray mv = bese.getJSONArray("file_list");
+                                mv.forEach(v -> {
+                                    JSONObject mvObj = JSON.parseObject(v.toString());
+                                    if (mvObj.getString("filename").contains(movieName)) {
+                                        String url = "https://www.weiyun.com/video_preview?videoID=" + mvObj.getString("file_id") + "&dirKey=" + dirkey + "&pdirKey=" + mvObj.getString(bese.getString("pdir_key"));
+                                        System.out.println("playUrl ：==>" + url);
+                                        try {
+                                            movieUrl = weiyunDownloadParse(url);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    System.out.println(offlineDir.toJSONString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
         });
         return movieUrl;
     }
@@ -83,7 +114,7 @@ public class MockWeiyun {
      */
     public static String weiyunOdOfflineDownloadClientBefore(String magnet) throws IOException {
         String payload = "{\"req_header\":\"{\\\"seq\\\":15263540663690256,\\\"type\\\":1,\\\"cmd\\\":28211,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.OdAddUrlTaskMsgReq_body\\\":{\\\"url\\\":\\\"" + magnet + "\\\"}}}\"}";
-        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_BEFORE, payload, cookie, null);
+        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_BEFORE + gtk(), payload, cookie, null);
     }
 
     public static String weiyunCompass() throws IOException {
@@ -109,7 +140,7 @@ public class MockWeiyun {
         String movieList = StringEscapeUtils.escapeJson(fileArray.toString());
         payload = payload.replace("myFileList", movieList);
         delimiter();
-        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_SAVE, payload, cookie, null);
+        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_SAVE + gtk(), payload, cookie, null);
     }
 
     /**
@@ -143,9 +174,15 @@ public class MockWeiyun {
         return "http://" + originVideo.getString("server_name") + ":" + originVideo.getString("server_port") + "/ftn_handler/" + originVideo.getString("encode_url") + "/" + videoInfo.getString("filename");
     }
 
+
+    public String weiyunFileSearch(String fileName) throws IOException {
+        String payload = "{\"req_header\":\"{\\\"seq\\\":15272364471634136,\\\"type\\\":1,\\\"cmd\\\":247251,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.FileSearchbyKeyWordMsgReq_body\\\":{\\\"type\\\":0,\\\"key_word\\\":\\\"" + fileName + "\\\",\\\"local_context\\\":\\\"\\\",\\\"location\\\":0}}}\"}";
+        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_FILE_SEARCH + gtk(), payload, cookie, null);
+    }
+
+
     private static void delimiter() {
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-
     }
 
 
@@ -165,25 +202,20 @@ public class MockWeiyun {
         return null;
     }
 
-    /**
-     * 获得 global token
-     * @param p_skey
-     * @return
-     */
-    private int getGTK(String p_skey) {
-        int hash = 5381;
-        for (int i = 0; i < p_skey.length(); i++) {
-            hash += (hash << 5) + (int) p_skey.charAt(i);
+
+    private static String gtk() {
+        if (g_tk == null) {
+            g_tk = "&g_tk=" + WeiyunHttpRequestUtils.getGTK(getValue("p_skey="));
         }
-        return hash & 0x7fffffff;
+        return g_tk;
     }
 
 
     @Test
     public void sss() throws IOException {
-        //System.out.println(getFileList());
-        String p_skey = "BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_";
-        System.out.println(getGTK(p_skey));
+        //System.out.println(getFileList(dirPayload("4aaf0d1a06f9a7ee01ee142fc7fc3fd1")));
+        //System.out.println(weiyunDownloadParse("https://www.weiyun.com/video_preview?videoID=390dd94c-1e36-4611-a1db-6e63c2dc81a3&dirKey=4aaf0d1a7ad4b906e0a823f5cffd1788&pdirKey=4aaf0d1a06f9a7ee01ee142fc7fc3fd1"));
+        System.out.println(weiyunFileSearch("战狼"));
     }
 
 

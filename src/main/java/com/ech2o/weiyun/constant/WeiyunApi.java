@@ -10,15 +10,19 @@ public class WeiyunApi {
     /**
      * 文件列表
      */
-    public static final String FILE_LIST = HOST + "/webapp/json/weiyunQdisk/DiskDirBatchList?refer=chrome_windows&g_tk=1510002013&r=0.36542725989447056";
+    public static final String FILE_LIST = HOST + "/webapp/json/weiyunQdisk/DiskDirBatchList?refer=chrome_windows&r=" + System.currentTimeMillis();
 
     /**
      * 提交离线下载
      */
-    public static final String WEIYUN_ODOFFLINE_DOWNLOAD_BEFORE = HOST + "/webapp/json/weiyunOdOfflineDownloadClient/OdAddUrlTask?refer=chrome_windows&g_tk=420079050&r=0.3479153457630959";
+    public static final String WEIYUN_ODOFFLINE_DOWNLOAD_BEFORE = HOST + "/webapp/json/weiyunOdOfflineDownloadClient/OdAddUrlTask?refer=chrome_windows&r=" + System.currentTimeMillis();
     /**
      * 保存离线下载
      */
-    public static final String WEIYUN_ODOFFLINE_DOWNLOAD_SAVE = HOST + "/webapp/json/weiyunOdOfflineDownloadClient/OdAddBtTask?refer=chrome_windows&g_tk=420079050&r=0.17209610498489747";
+    public static final String WEIYUN_ODOFFLINE_DOWNLOAD_SAVE = HOST + "/webapp/json/weiyunOdOfflineDownloadClient/OdAddBtTask?refer=chrome_windows&r=" + System.currentTimeMillis();
     public static final String WEIYUN_COMPASS = HOST + "/weiyun/compass/dc01956";
+    /**
+     *  文件搜索
+     */
+    public static final String WEIYUN_FILE_SEARCH = HOST + "/webapp/json/weiyunFileSearch/FileSearchbyKeyWord?refer=chrome_windows&r=" + System.currentTimeMillis();
 }

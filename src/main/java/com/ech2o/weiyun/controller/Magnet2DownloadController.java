@@ -20,24 +20,27 @@ public class Magnet2DownloadController {
 
     @GetMapping("m2d")
     public String m2d(@RequestParam String magnet, String cookie) throws IOException {
-        String msg = "错误的磁力链接";
+        String msg = "试用次数已使用完毕或未找到相应种子,后续将开放贡献 cookie";
+        boolean success = false;
         JSONObject invokeResult = new JSONObject();
         if (isMagnet(magnet)) {
             if (StringUtils.isNotEmpty(cookie)) {
                 MockWeiyun.setCookie(cookie);
             }
             String beforeResult = MockWeiyun.weiyunOdOfflineDownloadClientBefore(magnet);
-            if (beforeResult == null || beforeResult.contains("3000")) {
-                msg = "试用次数已使用完毕";
-            } else {
+            if (beforeResult != null && !beforeResult.contains("3000") && !beforeResult.contains("25301")) {
                 String saveResult = MockWeiyun.weiyunOdOfflineDownloadClientSave(beforeResult);
-                if (!(saveResult.contains("3000") || saveResult.contains("25313"))) {
+                if (!saveResult.contains("3000") && !saveResult.contains("25313")) {
                     invokeResult.put("videoUrl", MockWeiyun.getDownloadUrlByMovieName());
                     msg = "successfully";
+                    success = true;
                 }
             }
+        } else {
+            msg = "错误的磁力链接";
         }
         invokeResult.put("msg", msg);
+        invokeResult.put("success", success);
         return invokeResult.toJSONString();
     }
 
