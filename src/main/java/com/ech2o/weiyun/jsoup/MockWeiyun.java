@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ech2o.weiyun.constant.WeiyunApi;
 import com.ech2o.weiyun.util.WeiyunHttpRequestUtils;
+import lombok.experimental.var;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,7 +16,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by KAI on 2018/5/14.
@@ -27,7 +27,7 @@ public class MockWeiyun {
         MockWeiyun.cookie = cookie;
     }
 
-    private static String cookie = "pt2gguin=o2554497177; web_wx_rc=TSIHJV; uin=o2554497177; skey=@dQjxzvoSe; p_uin=o2554497177; pt4_token=NBLBn7mF7ySz6Y5K2t-dBZFlk7nCfq18r5lXi5R8aQA_; p_skey=UxQbYCuaugNTa8XwYSFuK448gjKce-jDEZ5zAZ65sIU_";
+    private static String cookie = "pgv_pvid=9686645906; web_wx_rc=OTWVSHZRNBHGP; uin=o0437104458; skey=@62Rz4Jla1; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=ttnyB1iN0LK2pXIwEbs6W7x1hrVinsmm*sAQXNEgtfk_; p_skey=BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_; pgv_pvid=9686645906; web_wx_rc=OTWVSHZRNBHGP; uin=o0437104458; skey=@62Rz4Jla1; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=ttnyB1iN0LK2pXIwEbs6W7x1hrVinsmm*sAQXNEgtfk_; p_skey=BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_";
     private static String skey = getValue("skey=");
     private static String uid = getValue("uin=0");
     private static String movieName;
@@ -41,7 +41,8 @@ public class MockWeiyun {
      * @throws IOException
      */
     public static String getFileList() throws IOException {
-        String payload = "{\"req_header\":\"{\\\"seq\\\":15262837952146048,\\\"type\\\":1,\\\"cmd\\\":26111,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.LibPageListGetMsgReq_body\\\":{\\\"lib_id\\\":4,\\\"sort_type\\\":1,\\\"offset\\\":0,\\\"count\\\":100,\\\"group_id\\\":0}}}\"}";
+        //String payload = "{\"req_header\":\"{\\\"seq\\\":15272240303038348,\\\"type\\\":1,\\\"cmd\\\":2209,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.DiskDirBatchListMsgReq_body\\\":{\\\"pdir_key\\\":\\\"e907dc43f0a739ae12b58dcd423dce4a\\\",\\\"dir_list\\\":[{\\\"dir_key\\\":\\\"e907dc43b950a50858e44864e6174ac2\\\",\\\"get_type\\\":0,\\\"start\\\":0,\\\"count\\\":100,\\\"sort_field\\\":2,\\\"reverse_order\\\":false,\\\"get_abstract_url\\\":true,\\\"get_dir_detail_info\\\":true}]}}}\"}";
+        String payload = "{\"req_header\":\"{\\\"seq\\\":15272245014516668,\\\"type\\\":1,\\\"cmd\\\":2209,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"@62Rz4Jla1\\\"}},\\\".weiyun.DiskDirBatchListMsgReq_body\\\":{\\\"pdir_key\\\":\\\"4aaf0d1af0a739ae12b58dcd423dce4a\\\",\\\"dir_list\\\":[{\\\"dir_key\\\":\\\"4aaf0d1a06f9a7ee01ee142fc7fc3fd1\\\",\\\"get_type\\\":0,\\\"start\\\":0,\\\"count\\\":100,\\\"sort_field\\\":2,\\\"reverse_order\\\":false,\\\"get_abstract_url\\\":true,\\\"get_dir_detail_info\\\":true}]}}}\"}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.FILE_LIST, payload, cookie, null);
     }
 
@@ -164,9 +165,26 @@ public class MockWeiyun {
         return null;
     }
 
+    /**
+     * 获得 global token
+     * @param p_skey
+     * @return
+     */
+    private int getGTK(String p_skey) {
+        int hash = 5381;
+        for (int i = 0; i < p_skey.length(); i++) {
+            hash += (hash << 5) + (int) p_skey.charAt(i);
+        }
+        return hash & 0x7fffffff;
+    }
+
+
     @Test
     public void sss() throws IOException {
-        System.out.println(getFileList());
+        //System.out.println(getFileList());
+        String p_skey = "BAfUwpxutFKfoCbsBeIuv3UnZv1kRREEzaEBMozpkLk_";
+        System.out.println(getGTK(p_skey));
     }
+
 
 }
