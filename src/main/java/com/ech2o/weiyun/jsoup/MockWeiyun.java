@@ -118,6 +118,11 @@ public class MockWeiyun {
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_ODOFFLINE_DOWNLOAD_BEFORE + gtk(), payload, cookie, null);
     }
 
+    /**
+     * 有可能是个心跳类的东西
+     * @return
+     * @throws IOException
+     */
     public static String weiyunCompass() throws IOException {
         String payload = "{\"uin\":\"" + uid + "\",\"domain\":\"www.weiyun.com\",\"url\":\"https://www.weiyun.com/disk/folder/e907dc43b950a50858e44864e6174ac2\",\"env\":1,\"proto\":\"weiyunOdOfflineDownloadClient\",\"cmdname\":\"OdAddUrlTask\",\"cmd\":28211,\"code\":0,\"result\":0}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_COMPASS, payload, cookie, null);
@@ -160,6 +165,11 @@ public class MockWeiyun {
         return downloadUrl;
     }
 
+    /**
+     * 获取播放页面的 windows.syncData
+     * @param weiyun
+     * @return
+     */
     private static String element2downloadUrl(Element weiyun) {
         JSONObject weiyunInfo = JSON.parseObject(weiyun.data().replace("window.syncData = ", "").replace(";", ""));
         JSONObject error = weiyunInfo.getJSONObject("error");
@@ -176,12 +186,23 @@ public class MockWeiyun {
     }
 
 
+    /**
+     * 查询提交的离线任务
+     * @return
+     * @throws IOException
+     */
     public static String weiyunTasks() throws IOException {
         String payload = "{\"req_header\":\"{\\\"seq\\\":15318983146925638,\\\"type\\\":1,\\\"cmd\\\":28220,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.OdGetTaskListMsgReq_body\\\":{}}}\"}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_TASK_LIST + gtk(), payload, cookie, null);
     }
 
 
+    /**
+     * 文件搜索，没卵用
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     public String weiyunFileSearch(String fileName) throws IOException {
         String payload = "{\"req_header\":\"{\\\"seq\\\":15272364471634136,\\\"type\\\":1,\\\"cmd\\\":247251,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.FileSearchbyKeyWordMsgReq_body\\\":{\\\"type\\\":0,\\\"key_word\\\":\\\"" + fileName + "\\\",\\\"local_context\\\":\\\"\\\",\\\"location\\\":0}}}\"}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_FILE_SEARCH + gtk(), payload, cookie, null);
@@ -213,6 +234,7 @@ public class MockWeiyun {
     private static String gtk() {
         if (g_tk == null) {
             //g_tk = "&g_tk=" + WeiyunHttpRequestUtils.getGTK(getValue("p_skey="));
+            // 之前的 global token 是由 p_skey 算出来的，现在 微云会直接返回在 cookie 中 ，即 wyctoken
             g_tk = "&g_tk=" + getValue("wyctoken=");
         }
         return g_tk;
