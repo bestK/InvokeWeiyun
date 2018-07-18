@@ -22,11 +22,12 @@ import java.util.List;
  */
 public class MockWeiyun {
 
+    public static String cookie = "pgv_pvid=9686645906; pt2gguin=o1138493417; web_wx_rc=AGTDKY; pgv_pvi=483587072; pgv_si=s6938560512; uin=o1138493417; skey=@QFJZtX9p4; ptisp=ctc; ptcz=e7a08ad98a3bec680ce15625847a5cdb9f531121cbb9a99adebd1b7357f165a6; p_uin=o1138493417; pt4_token=DzCaXmlQq-9YPQxLPfIebJxHfZSZNQFnrLEatGOuU2w_; p_skey=jnG*8lhlMyRtiiL7HhP0bTsW5y7JB0wSTHlA5l18TOA_; wyctoken=535246355";
+
     public static void setCookie(String cookie) {
         MockWeiyun.cookie = cookie;
     }
 
-    private static String cookie = "pgv_pvid=9686645906; web_wx_rc=NJOYHWFHDV; uin=o0437104458; skey=@2hn7TMuJW; pt2gguin=o0437104458; p_uin=o0437104458; pt4_token=yEReAwwdz*cTCUoxhjP62PvzCHtipK7udRr4rBiSEOw_; p_skey=yBDNfo7TYrBm7W8OT1nj9ew6DR2CeQ6VQfNbINK8LxI_";
     private static String skey = getValue("skey=");
     private static String uid = getValue("uin=0");
     private static String g_tk = null;
@@ -175,6 +176,12 @@ public class MockWeiyun {
     }
 
 
+    public static String weiyunTasks() throws IOException {
+        String payload = "{\"req_header\":\"{\\\"seq\\\":15318983146925638,\\\"type\\\":1,\\\"cmd\\\":28220,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.OdGetTaskListMsgReq_body\\\":{}}}\"}";
+        return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_TASK_LIST + gtk(), payload, cookie, null);
+    }
+
+
     public String weiyunFileSearch(String fileName) throws IOException {
         String payload = "{\"req_header\":\"{\\\"seq\\\":15272364471634136,\\\"type\\\":1,\\\"cmd\\\":247251,\\\"appid\\\":30013,\\\"version\\\":3,\\\"major_version\\\":3,\\\"minor_version\\\":3,\\\"fix_version\\\":3,\\\"wx_openid\\\":\\\"\\\",\\\"user_flag\\\":0}\",\"req_body\":\"{\\\"ReqMsg_body\\\":{\\\"ext_req_head\\\":{\\\"token_info\\\":{\\\"token_type\\\":0,\\\"login_key_type\\\":1,\\\"login_key_value\\\":\\\"" + skey + "\\\"}},\\\".weiyun.FileSearchbyKeyWordMsgReq_body\\\":{\\\"type\\\":0,\\\"key_word\\\":\\\"" + fileName + "\\\",\\\"local_context\\\":\\\"\\\",\\\"location\\\":0}}}\"}";
         return WeiyunHttpRequestUtils.post(WeiyunApi.WEIYUN_FILE_SEARCH + gtk(), payload, cookie, null);
@@ -205,7 +212,8 @@ public class MockWeiyun {
 
     private static String gtk() {
         if (g_tk == null) {
-            g_tk = "&g_tk=" + WeiyunHttpRequestUtils.getGTK(getValue("p_skey="));
+            //g_tk = "&g_tk=" + WeiyunHttpRequestUtils.getGTK(getValue("p_skey="));
+            g_tk = "&g_tk=" + getValue("wyctoken=");
         }
         return g_tk;
     }
@@ -216,6 +224,7 @@ public class MockWeiyun {
         //System.out.println(getFileList(dirPayload("4aaf0d1a06f9a7ee01ee142fc7fc3fd1")));
         //System.out.println(weiyunDownloadParse("https://www.weiyun.com/video_preview?videoID=390dd94c-1e36-4611-a1db-6e63c2dc81a3&dirKey=4aaf0d1a7ad4b906e0a823f5cffd1788&pdirKey=4aaf0d1a06f9a7ee01ee142fc7fc3fd1"));
         System.out.println(weiyunFileSearch("战狼"));
+        System.out.println(weiyunTasks());
     }
 
 

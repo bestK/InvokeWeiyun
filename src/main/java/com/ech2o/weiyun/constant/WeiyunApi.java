@@ -25,4 +25,7 @@ public class WeiyunApi {
      *  文件搜索
      */
     public static final String WEIYUN_FILE_SEARCH = HOST + "/webapp/json/weiyunFileSearch/FileSearchbyKeyWord?refer=chrome_windows&r=" + System.currentTimeMillis();
+
+
+    public static final String WEIYUN_TASK_LIST = HOST+"/webapp/json/weiyunOdOfflineDownloadClient/OdGetTaskList?refer=chrome_windows&r="+ System.currentTimeMillis();
 }

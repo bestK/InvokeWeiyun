@@ -35,6 +35,7 @@ public class WeiyunHttpRequestUtils {
      * @return
      */
     public static int getGTK(String p_skey) {
+        System.out.println(p_skey);
         int hash = 5381;
         for (int i = 0; i < p_skey.length(); i++) {
             hash += (hash << 5) + (int) p_skey.charAt(i);
