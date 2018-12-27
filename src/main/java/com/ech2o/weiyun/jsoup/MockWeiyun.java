@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class MockWeiyun {
 
-    public static String cookie = "pgv_pvid=9686645906; pt2gguin=o1138493417; web_wx_rc=AGTDKY; pgv_pvi=483587072; pgv_si=s6938560512; uin=o1138493417; skey=@QFJZtX9p4; ptisp=ctc; ptcz=e7a08ad98a3bec680ce15625847a5cdb9f531121cbb9a99adebd1b7357f165a6; p_uin=o1138493417; pt4_token=DzCaXmlQq-9YPQxLPfIebJxHfZSZNQFnrLEatGOuU2w_; p_skey=jnG*8lhlMyRtiiL7HhP0bTsW5y7JB0wSTHlA5l18TOA_; wyctoken=535246355";
+    public static String cookie = "pgv_pvid=9686645906; pt2gguin=o17; web_wx_rc=AGTDKY; pgv_pvi=483587072; pgv_si=s6938560512; uin=o1138493417; skey=@QFJZtX9p4; ptisp=ctc; ptcz=e7a08ad98a3bec680ce15625847a5cdb9f531121cbb9a99adebd1b7357f165a6; p_uin=o1138493417; pt4_token=DzCaXmlQq-9YPQxLPfIebJxHfZSZNQFnrLEatGOuU2w_; p_skey=jnG*8lhlMyRtiiL7HhP0bTsW5y7JB0wSTHlA5l18TOA_; wyctoken=535246355";
 
     public static void setCookie(String cookie) {
         MockWeiyun.cookie = cookie;
